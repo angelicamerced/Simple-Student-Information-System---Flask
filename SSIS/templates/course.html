@@ -1,13 +1,16 @@
-{% extends "layout.html" %}
+{% extends "homepage.html" %}
 
 {% block content%}
+
 <br>
 <div class="d-flex justify-content-center">
   <p class="text-dark h4 fw-bolder">
-    List of Courses
+    List of Colleges
   </p>
 </div>
 <br>
+
+<!-- flash message -->
 {% with messages=get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
@@ -19,124 +22,140 @@
             {{ message }}
         </div>
       {% else %}
-          <div class="alert alert-danger alert-dismissable show" role="alert">
-            <strong>
-              <i class="far fa-exclamation-circle"></i>
-            </strong>
-              {{ message }}
-          </div>
+        <div class="alert alert-danger alert-dismissable show" role="alert">
+          <strong>
+            <i class="far fa-exclamation-circle"></i>
+          </strong>
+            {{ message }}
+        </div>
       {% endif %}
     {% endfor %}
   {% endif %}
 {% endwith %}
+
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <nav class="navbar navbar-light bg-light">
           <div class="container-fluid">
+
+            <!-- filter table field -->
             <form class="d-flex">
-              <input class="form-control me-2 search-input fw-bold" type="search" placeholder="Search" data-table="courses-list">
+              <input class="form-control me-2 search-input fw-bold" type="search" placeholder="Search" data-table="colleges-list">
             </form>
-          <button type="button" class="btn btn-outline-warning me-md-2 fw-bold" data-bs-toggle="modal" data-bs-target="#myModal">
-            Add Course
-          </button>
-          <table class="bg-secondary bg-gradient bg-opacity-10 table table-hover courses-list">
-            <thead>
-              <tr>
-                <th>Course Code</th>
-                <th>Course Name</th>
-                <th>College Code</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-              <tbody>
-              {% for course in courses %}
+
+            <!-- add course button -->
+            <button type="button" class="btn btn-outline-danger me-md-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addModal">
+              Add Course
+            </button>
+
+            <table class="bg-secondary bg-gradient bg-opacity-10 table table-hover colleges-list">
+              <thead>
                 <tr>
-                  <td class="fw-bold">{{course.0}}</td>
-                  <td>{{course.1}}</td>
-                  <td>{{course.2}}</td>
-                  <td>
-                    <a href="{{url_for('course.updatecrs')}}" class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{course.0}}">
-                      Edit
-                    </a>
-                    <a href="/delete_course/{{course.0}}" class="badge rounded-pill bg-danger btn-xs" onclick="return confirm('Are you sure to delete?')">
-                      Delete
-                    </a>
-                  </td>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th>College Code</th>
+                  <th>Action</th>
                 </tr>
-                <div id="modalEdit{{course.0}}" class="modal fade" role="dialog">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h4 class="modal-title">Edit Data</h4>
-                      </div>
-                      <div class="modal-body">
-                        <form action="{{url_for('course.updatecrs')}}" method="POST">
-                          <div class="form-group">
-                            <label>Course Code:</label>
-                              <input type="hidden" name="course_code" value="{{course.0}}">
-                              <input type="text" class="form-control" name="course_code" value="{{course.0}}" disabled>
-                          </div>
-                          <div class="form-group">
-                            <label>Course Name:</label>
-                              <input type="text" class="form-control" name="course_name" value="{{course.1}}">
-                          </div>
-                          <div class="form-group">
-                            <label for="college_code">College Code</label>
-                              <select name="college_code" class="form-select" data-live-search="true">
-                                <option selected value="{{course.2}}">{{course.2}}</option>
-                                  {% for row in options %}
-                                    <option value="{{row.0}}">{{row.0}}</option>
-                                  {% endfor %}
+              </thead>
+                <tbody>
+                  {% for course in courses %}
+                  <tr>
+                    <td class="fw-bold">{{course.0}}</td>
+                    <td>{{course.1}}</td>
+                    <td>{{course.2}}</td>
+                    <td>
+                      <!-- edit course button -->
+                      <a class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{course.0}}">
+                        Edit
+                      </a>
+
+                      <!-- delete course button -->
+                      <a href="{{ url_for('course.remove_course', course_code=course.0) }}" class="badge rounded-pill bg-danger btn-xs" onclick="return confirm('Are you sure you would like to remove this course? This action cannot be undone.')">
+                        Delete
+                      </a>
+                    </td>
+                  </tr>
+
+                  <!-- edit modal -->
+                  {{ form.hidden_tag() }}
+                  <div id="modalEdit{{course.0}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Edit Data</h4>
+                        </div>
+                        <div class="modal-body">
+                          <form action="{{ url_for('course.edit_course') }}" method="POST">
+                            <div class="form-group">
+                              {{ form.course_code.label }}
+                              {{ form.course_code(type="hidden", value=course.0) }}
+                              {{ form.course_code(class="form-control", value=course.0) }}
+                            </div>
+                            <div class="form-group">
+                              {{ form.course_name.label }}
+                              {{ form.course_name(class="form-control", value=course.1) }}
+                            </div>
+                            <div class="form-group">
+                              <label for="updatecollege">College</label>
+                              <select name="updatecollege" class="form-control selectpicker" required>
+                                <option value="{{ course.2 }}">{{ course.2 }} </option>
+                                {% for college in options %}
+                                  <option value="{{ college.0 }}">{{ college.1 }}</option>
+                                {% endfor %}
                               </select>
-                          </div>
-                          <br>
-                          <div class="form-group">
-                            <button class="btn btn-warning" type="submit">Update</button>
-                          </div>
-                        </form>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                              {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>
                   </div>
-              </tbody>
-              {% endfor %}
-          </table>
+                  </tbody>
+                  {% endfor %}
+            </table>
+          </div>
         </div>
       </div>
-  </div>
+    </div>
 
-  <div id="myModal" class="modal fade" role="dialog">
+  <!-- add modal -->
+  {{ form.hidden_tag() }}
+  <div id="addModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h4>Add Data</h4>
         </div>
+
         <div class="modal-body">
-          <form action="{{url_for('course.addcrs')}}" id=courseform method="POST">
+          <form action="{{ url_for('course.create_course') }}" id=courseform method="POST">
             <div class="form-group">
-              <label>Course Code:</label>
-              <input style="text-transform: uppercase;" type="text" maxlength="50" class="form-control" id="course_code" name="course_code" required>
+              {{ form.course_code.label }}
+              {{ form.course_code }}
             </div>
             <div class="form-group">
-              <label>Course Name:</label>
-              <input type="text" maxlength="100" class="form-control" id="course_name" name="course_name" required>
+              {{ form.course_name.label }}
+              {{ form.course_name }}
             </div>
             <div class="form-group">
-              <label for="college_code">College Code</label>
-              <select name="college_code" class="form-select" data-live-search="true" required>
-                <option selected disabled value=""></option>
-                  {% for row in options %}
-                    <option value="{{row.0}}">{{row.0}}</option>
-                  {% endfor %}
+              <label for="addcollege">College</label>
+              <select name="addcollege" class="form-control selectpicker" required>
+                <option selected disabled value="">Choose...</option>
+                {% for college in options %}
+                  <option value="{{ college.0 }}">{{ college.1 }}</option>
+                {% endfor %}
               </select>
             </div>
             <br>
             <div class="form-group">
-              <button class="btn btn-primary" type="submit">Save</button>
+              {{ form.submit(class="btn btn-primary") }}
             </div>
           </form>
         </div>
@@ -187,9 +206,10 @@
     })(document);
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ"  crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"  crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.min.js" integrity="sha384-PsUw7Xwds7x08Ew3exXhqzbhuEYmA2xnwc8BuD6SEr+UmEHlX8/MCltYEodzWA4u"  crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.min.js" integrity="sha384-PsUw7Xwds7x08Ew3exXhqzbhuEYmA2xnwc8BuD6SEr+UmEHlX8/MCltYEodzWA4u" crossorigin="anonymous"></script>
 
   {% endblock content%}
 

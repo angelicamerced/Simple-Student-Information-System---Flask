@@ -1,12 +1,4 @@
-from config import DB_NAME, DB_HOST, DB_PASS, DB_USER
-import mysql.connector
-
-connection = mysql.connector.connect(
-    host = DB_HOST,
-    user = DB_USER,
-    passwd = DB_PASS,
-    database = DB_NAME
-)
+from SSIS import mysql
 
 class Course():
     def __init__(self, course_code=None, course_name=None, college_code=None):
@@ -14,37 +6,62 @@ class Course():
         self.course_name = course_name
         self.college_code = college_code
 
-    def add_course(self, course_code):
-        cursor = connection.cursor()
-        cursor.execute('''SELECT COUNT(*) FROM courses WHERE course_code=%s''', (course_code,))
+    # filter course data
+    @staticmethod
+    def coursebyCode(course_code):
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'''
+                       SELECT * FROM courses
+                       WHERE course_code=%s
+                       ''', (course_code,))
         exist = cursor.fetchone()
         cursor.close()
         return exist
 
-    @classmethod
-    def update_course(cls, course_code, course_name, college_code):
-        cursor = connection.cursor()
-        cursor.execute('''UPDATE courses SET course_name=%s, college_code=%s WHERE course_code=%s''', (course_name, college_code, course_code))
-        connection.commit()
+    # request course data
+    @staticmethod
+    def add_course(addForm, college_code):
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'''
+                        INSERT INTO courses
+                        VALUES ('{addForm['course_code']}',
+                                '{addForm['course_name']}',
+                                '{college_code}')
+                        ''')
+        mysql.connection.commit()
+
+    # update course data
+    @staticmethod
+    def update_course(updateForm, college_code):
+        cursor= mysql.connection.cursor()
+        cursor.execute(f'''
+                        UPDATE courses
+                        SET course_code='{updateForm["course_code"]}',
+                            course_name='{updateForm["course_name"]}',
+                            college_code='{college_code}'
+                        WHERE course_code='{updateForm["course_code"]}'
+                        ''')
+        mysql.connection.commit()
         cursor.close()
 
-    @classmethod
-    def delete_course(cls, course_code):
-        cursor = connection.cursor()
-        cursor.execute("DELETE FROM courses WHERE course_code=%s", (course_code,))
-        connection.commit()
+    # delete course data
+    @staticmethod
+    def delete_course(course_code):
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'''
+                        DELETE FROM courses
+                        WHERE course_code='{course_code}'
+                        ''')
+        mysql.connection.commit()
         cursor.close()
 
-    def all(self):
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM courses ORDER BY college_code")
+    # get course list
+    @staticmethod
+    def getCourses():
+        cursor = mysql.connection.cursor()
+        cursor.execute('''
+                       SELECT * FROM courses
+                       ''')
         courses = cursor.fetchall()
         cursor.close()
         return courses
-
-    def options(self):
-        cursor = connection.cursor()
-        cursor.execute('''SELECT college_code FROM courses UNION SELECT college_code FROM colleges ORDER BY college_code ''')
-        options = cursor.fetchall()
-        cursor.close()
-        return options

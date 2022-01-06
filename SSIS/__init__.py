@@ -17,12 +17,12 @@ def create_app(test_config=None):
 
     from SSIS.homepage import home
     # from .student import student
-    # from .course import course
-    from SSIS.college.college import college
+    from .course.course import course
+    from .college.college import college
 
     app.register_blueprint(home)
     # app.register_blueprint(student,  url_prefix="/")
-    # app.register_blueprint(course,  url_prefix="/")
+    app.register_blueprint(course)
     app.register_blueprint(college)
 
 

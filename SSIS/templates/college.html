@@ -64,9 +64,9 @@
                     <td>{{college.1}}</td>
                     <td>
                       <!-- edit college button -->
-                      <button type="button" class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{college.0}}">
+                      <a class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{college.0}}">
                         Edit
-                      </button>
+                      </a>
 
                       <!-- delete college button -->
                       <a href="{{ url_for('college.remove_college', college_code=college.0) }}" class="badge rounded-pill bg-danger btn-xs" onclick="return confirm('Are you sure you would like to remove this college? This action cannot be undone.')">
@@ -114,8 +114,9 @@
       </div>
     </div>
 
-  {{ form.hidden_tag() }}
+
   <!-- add modal -->
+  {{ form.hidden_tag() }}
   <div id="addModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -126,7 +127,7 @@
         <div class="modal-body">
           <form action="{{ url_for('college.create_college') }}" id=collegeform method="POST">
             <div class="form-group">
-              <label>College Code:</label>
+              {{ form.college_code.label }}
               {{ form.college_code }}
             </div>
             <div class="form-group">

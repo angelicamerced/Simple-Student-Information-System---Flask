@@ -20,8 +20,8 @@ def create_college():
     if request.method == 'POST':
 
         addForm = collegeForm()
-        data = db.College.add_college(addForm.data)
-        flash(" College has been successfully added.", "success")
+        db.College.add_college(addForm.data)
+        flash("College has been successfully added.", "success")
         return redirect(url_for('college.display_colleges'))
 
     else:

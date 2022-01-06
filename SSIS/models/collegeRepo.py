@@ -17,7 +17,7 @@ class College():
     @staticmethod
     def collegebyCode(college_code):
         cursor = connection.cursor()
-        cursor.execute('''
+        cursor.execute(f'''
                        SELECT * FROM colleges
                        WHERE college_code=%s
                        ''', (college_code,))
@@ -25,7 +25,7 @@ class College():
         cursor.close()
         return exist
 
-    # request curriculum data
+    # request college data
     @staticmethod
     def add_college(addForm):
         cursor = connection.cursor()
@@ -63,7 +63,8 @@ class College():
         cursor.close()
 
     # get college list
-    def getColleges(self):
+    @staticmethod
+    def getColleges():
         cursor = connection.cursor()
         cursor.execute('''
                        SELECT * FROM colleges
