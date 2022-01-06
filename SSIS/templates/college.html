@@ -1,0 +1,196 @@
+{% extends "homepage.html" %}
+
+{% block content%}
+
+<br>
+<div class="d-flex justify-content-center">
+  <p class="text-dark h4 fw-bolder">
+    List of Colleges
+  </p>
+</div>
+<br>
+
+<!-- flash message -->
+{% with messages=get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      {% if category=="success" %}
+        <div class="alert alert-success alert-dismissable show" role="alert">
+          <strong>
+            <i class="far fa-check-circle"></i>
+          </strong>
+            {{ message }}
+        </div>
+      {% else %}
+        <div class="alert alert-danger alert-dismissable show" role="alert">
+          <strong>
+            <i class="far fa-exclamation-circle"></i>
+          </strong>
+            {{ message }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <nav class="navbar navbar-light bg-light">
+          <div class="container-fluid">
+
+            <!-- filter table field -->
+            <form class="d-flex">
+              <input class="form-control me-2 search-input fw-bold" type="search" placeholder="Search" data-table="colleges-list">
+            </form>
+
+            <!-- add college button -->
+            <button type="button" class="btn btn-outline-danger me-md-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addModal">
+              Add College
+            </button>
+
+            <table class="bg-secondary bg-gradient bg-opacity-10 table table-hover colleges-list">
+              <thead>
+                <tr>
+                  <th>College Code</th>
+                  <th>College Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+                <tbody>
+                  {% for college in colleges %}
+                  <tr>
+                    <td class="fw-bold">{{college.0}}</td>
+                    <td>{{college.1}}</td>
+                    <td>
+                      <!-- edit college button -->
+                      <button type="button" class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{college.0}}">
+                        Edit
+                      </button>
+
+                      <!-- delete college button -->
+                      <a href="{{ url_for('college.remove_college', college_code=college.0) }}" class="badge rounded-pill bg-danger btn-xs" onclick="return confirm('Are you sure you would like to remove this college? This action cannot be undone.')">
+                        Delete
+                      </a>
+                    </td>
+                  </tr>
+
+                  <!-- edit modal -->
+                  {{ form.hidden_tag() }}
+                  <div id="modalEdit{{college.0}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Edit Data</h4>
+                        </div>
+                        <div class="modal-body">
+                          <form action="{{ url_for('college.edit_college') }}" method="POST">
+                            <div class="form-group">
+                              {{ form.college_code.label }}
+                              {{ form.college_code(type="hidden", value=college.0) }}
+                              {{ form.college_code(class="form-control", value=college.0) }}
+                            </div>
+                            <div class="form-group">
+                              {{ form.college_name.label }}
+                              {{ form.college_name(class="form-control", value=college.1) }}
+                            </div>
+                            <br>
+                            <div class="form-group">
+                              {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </tbody>
+                  {% endfor %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {{ form.hidden_tag() }}
+  <!-- add modal -->
+  <div id="addModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>Add Data</h4>
+        </div>
+
+        <div class="modal-body">
+          <form action="{{ url_for('college.create_college') }}" id=collegeform method="POST">
+            <div class="form-group">
+              <label>College Code:</label>
+              {{ form.college_code }}
+            </div>
+            <div class="form-group">
+              <label>College Name:</label>
+              {{ form.college_name }}
+            </div>
+            <br>
+            <div class="form-group">
+              {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(document) {
+        'use strict';
+
+        var TableFilter = (function(myArray) {
+            var search_input;
+
+            function _onInputSearch(e) {
+                search_input = e.target;
+                var tables = document.getElementsByClassName(search_input.getAttribute('data-table'));
+                myArray.forEach.call(tables, function(table) {
+                    myArray.forEach.call(table.tBodies, function(tbody) {
+                        myArray.forEach.call(tbody.rows, function(row) {
+                            var text_content = row.textContent.toLowerCase();
+                            var search_val = search_input.value.toLowerCase();
+                            row.style.display = text_content.indexOf(search_val) > -1 ? '' : 'none';
+                        });
+                    });
+                });
+            }
+
+            return {
+                init: function() {
+                    var inputs = document.getElementsByClassName('search-input');
+                    myArray.forEach.call(inputs, function(input) {
+                        input.oninput = _onInputSearch;
+                    });
+                }
+            };
+        })(Array.prototype);
+
+        document.addEventListener('readystatechange', function() {
+            if (document.readyState === 'complete') {
+                TableFilter.init();
+            }
+        });
+
+    })(document);
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.min.js" integrity="sha384-PsUw7Xwds7x08Ew3exXhqzbhuEYmA2xnwc8BuD6SEr+UmEHlX8/MCltYEodzWA4u" crossorigin="anonymous"></script>
+
+  {% endblock content%}
+
+
