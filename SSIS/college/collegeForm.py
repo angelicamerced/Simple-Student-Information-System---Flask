@@ -13,8 +13,3 @@ class collegeForm(FlaskForm):
                               validators=[DataRequired(), Length(max=100)])
 
     submit = SubmitField('Submit')
-
-    def validate_college_code(self, college_code):
-        cc = College.collegebyCode(college_code.data)
-        if cc:
-            raise validators.ValidationError('College code already taken.')

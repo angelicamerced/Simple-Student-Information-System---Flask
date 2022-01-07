@@ -44,7 +44,7 @@ def edit_course():
         return redirect(url_for('course.display_courses'))
 
 # Delete course
-@course.route('/delete_course/<string:course_code>', methods=['GET'])
+@course.route('/delete_course/<string:course_code>')
 def remove_course(course_code):
     db.Course.delete_course(course_code)
     flash("Course has been successfully removed.", "success")

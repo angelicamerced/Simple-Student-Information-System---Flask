@@ -41,7 +41,7 @@ def edit_college():
         return redirect(url_for('college.display_colleges'))
 
 # Delete college
-@college.route('/delete_college/<string:college_code>', methods=['GET'])
+@college.route('/delete_college/<string:college_code>')
 def remove_college(college_code):
     db.College.delete_college(college_code)
     flash("College has been successfully removed.", "success")
