@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "homepage.html" %}
 
 {% block content%}
 
@@ -9,6 +9,8 @@
   </p>
 </div>
 <br>
+
+  <!-- flash message -->
   {% with messages=get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
@@ -37,164 +39,205 @@
         <div class="col-md-12">
           <nav class="navbar navbar-light bg-light bg-gradient">
             <div class="container-fluid">
+
+              <!-- filter table field -->
               <form class="d-flex">
                 <input class="form-control me-2 search-input fw-bold" type="search" placeholder="Search" data-table="students-list">
               </form>
-            <button type="button" class="btn btn-outline-primary me-md-2 fw-bold" data-bs-toggle="modal" data-bs-target="#myModal">
-              Add Student
-            </button>
-            <table id="datatable" class="bg-secondary bg-gradient bg-opacity-10 table table-hover students-list">
-              <thead>
-                <tr>
-                  <th>ID Number</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Course Code</th>
-                  <th>Year Level</th>
-                  <th>Gender</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-                <tbody>
-                  {% for student in students %}
+
+              <!-- add student button -->
+              <button type="button" class="btn btn-outline-primary me-md-2 fw-bold" data-bs-toggle="modal" data-bs-target="#addModal">
+                Add Student
+              </button>
+
+              <table id="datatable" class="bg-secondary bg-gradient bg-opacity-10 table table-hover students-list">
+                <thead>
                   <tr>
-                    <td class="fw-bold">{{student.0}}</td>
-                    <td class="fst-normal">{{student.1}}</td>
-                    <td class="fst-normal">{{student.2}}</td>
-                    <td class="fst-normal">{{student.3}}</td>
-                    <td class="fst-normal">{{student.4}}</td>
-                    <td class="fst-normal">{{student.5}}</td>
-                    <td>
-                      <a href="{{url_for('student.studentEditPage', curr_id=students[0])}}" class="badge rounded-pill bg-warning text-dark btn-xs">
-                        Edit
-                      </a>
-                      <a href="/delete_student/{{student.0}}" class="badge rounded-pill bg-danger btn-xs" onclick="return confirm('Are you sure you want to delete?')">
-                        Delete
-                      </a>
-                    </td>
+                    <th>ID Number</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Course Code</th>
+                    <th>Year Level</th>
+                    <th>Gender</th>
+                    <th>Action</th>
                   </tr>
-                  <div id="modalEdit{{student.0}}" class="modal fade" role="dialog">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Edit Data</h4>
-                        </div>
-                        <div class="modal-body">
-                          <form action="{{url_for('student.updatestd')}}" method="POST">
-                            <div class="form-group">
-                              <label>ID Number:</label>
-                                <input type="hidden" name="id_number" value="{{student.0}}">
-                                <input type="text" class="form-control" value="{{student.0}}" disabled>
-                            </div>
-                            <div class="form-group">
-                              <label>First Name:</label>
-                                <input type="text" class="form-control" name="first_name" value="{{student.1}}">
-                            </div>
-                            <div class="form-group">
-                              <label>Last Name:</label>
-                                <input type="text" class="form-control" name="last_name" value="{{student.2}}">
-                            </div>
-                            <div class="form-group">
-                              <label for="course_code">Course</label>
-                                <select name="course_code" class="form-select" data-live-search="true">
-                                  <option selected value="{{student.3}}">{{student.3}}</option>
-                                  {% for row in options %}
-                                    <option value="{{row.0}}">{{row.0}}</option>
+                </thead>
+                  <tbody>
+                    {% for student in students %}
+                    <tr>
+                      <td class="fw-bold">{{student.0}}</td>
+                      <td class="fst-normal">{{student.1}}</td>
+                      <td class="fst-normal">{{student.2}}</td>
+                      <td class="fst-normal">{{student.3}}</td>
+                      <td class="fst-normal">{{student.4}}</td>
+                      <td class="fst-normal">{{student.5}}</td>
+                      <td>
+                        <!-- edit student button -->
+                        <a href="{{ url_for('student.edit_student') }}" class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{student.0}}">
+                          Edit
+                        </a>
+
+                        <!-- delete student button -->
+                        <a href="{{ url_for('student.remove_student', id_number=student.0) }}" class="badge rounded-pill bg-danger btn-xs" onclick="return confirm('Are you sure you want to delete?')">
+                          Delete
+                        </a>
+                      </td>
+                    </tr>
+
+                    <!-- edit modal -->
+                    {{ form.hidden_tag() }}
+                    <div id="modalEdit{{student.0}}" class="modal fade" role="dialog">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Edit Data</h4>
+                          </div>
+                          <div class="modal-body">
+                            <form action="{{ url_for('student.edit_student') }}" method="POST">
+
+                              <!-- id number -->
+                              <div class="form-group">
+                                {{ form.id_number.label }}
+                                {{ form.id_number(type="hidden", value=student.0) }}
+                                {{ form.id_number(class="form-control", value=student.0, readonly="false") }}
+                              </div>
+
+                              <!-- first name -->
+                              <div class="form-group">
+                                {{ form.firstName.label }}
+                                {{ form.firstName(class="form-control", value=student.2) }}
+                              </div>
+
+                              <!-- last name -->
+                              <div class="form-group">
+                                {{ form.lastName.label }}
+                                {{ form.lastName(class="form-control", value=student.1) }}
+                              </div>
+
+                              <!-- course code -->
+                              <div class="form-group">
+                                <label for="updatecourse">Course</label>
+                                <select name="updatecourse" class="form-select" data-live-search="true" required>
+                                  <option value="{{ student.3 }}">{{ student.3 }} </option>
+                                  {% for course in options %}
+                                  <option value="{{course.0}}">{{course.1}}</option>
                                   {% endfor %}
                                 </select>
-                            </div>
-                            <div class="form-group">
-                              <label for="year_level">Year Level</label>
-                                  <select name="year_level" class="form-select" data-live-search="true">
-                                      <option selected value="{{student.4}}">{{student.4}}</option>
-                                      <option value="First Year">First Year</option>
-                                      <option value="Second Year">Second Year</option>
-                                      <option value="Third Year">Third Year</option>
-                                      <option value="Fourth Year">Fourth Year</option>
-                                      <option value="Fifth Year">Fifth Year</option>
-                                  </select>
-                            </div>
-                            <div class="form-group">
-                              <label for="gender">Gender</label>
-                                  <select name="gender" class="form-select" data-live-search="true">
-                                      <option selected value="{{student.5}}">{{student.5}}</option>
-                                      <option value="Male">Male</option>
-                                      <option value="Female">Female</option>
-                                      <option value="Others">Others</option>
-                                  </select>
-                            </div>
-                            <br>
+                              </div>
 
-                            <button class="btn btn-warning" type="submit">Update</button>
+                              <!-- year level-->
+                              <div class="form-group">
+                                <label for="updateyear">Year Level</label>
+                                <select name="updateyear" class="form-select" data-live-search="true" required>
+                                  <option value="{{ student.4 }}">{{ student.4 }} </option>
+                                  <option value="1">First year</option>
+                                  <option value="2">Second year</option>
+                                  <option value="3">Third year</option>
+                                  <option value="4">Fourth year</option>
+                                  <option value="5">Fifth year</option>
+                                  <option value="6">Sixth year</option>
+                                </select>
+                              </div>
 
-                          </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-                        </div>
+                              <!-- gender -->
+                              <div class="form-group">
+                                <label for="updategender">Gender</label>
+                                <select name="updategender" class="form-select" data-live-search="true" required>
+                                  <option value="{{ student.5 }}">{{ student.5 }} </option>
+                                  <option value="Male">Male</option>
+                                  <option value="Female">Female</option>
+                                </select>
+                              </div>
+                              <br>
+
+                              <!-- submit button -->
+                              <div class="form-group">
+                                {{ form.submit(class="btn btn-primary") }}
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                          </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                </tbody>
-                  {% endfor %}
-            </table>
+                  </tbody>
+                    {% endfor %}
+              </table>
           </div>
         </div>
     </div>
   </div>
 
-<div id="myModal" class="modal fade" role="dialog">
+<!-- add modal -->
+<div id="addModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4>Students Information</h4>
       </div>
+
       <div class="modal-body">
-        <form action="{{url_for('student.addstd')}}" id=studentform method="POST">
+        <form action="{{ url_for('student.create_student') }}" id=studentform method="POST">
+
+          <!-- id number -->
           <div class="form-group">
-            <label>ID Number:</label>
-            <input type="text" maxlength="9" class="form-control" id="id_number" name="id_number" placeholder="YYYY-YYYY" required>
+            {{ form.id_number.label }}
+            {{ form.id_number(class="form-control", placeholder="YYYY-NNNN") }}
           </div>
+
+          <!-- first name -->
           <div class="form-group">
-            <label>First Name:</label>
-            <input type="text" maxlength="100" class="form-control" id="first_name" name="first_name" required>
+            {{ form.firstName.label }}
+            {{ form.firstName(class="form-control") }}
           </div>
+
+          <!-- last name -->
           <div class="form-group">
-            <label>Last Name:</label>
-            <input type="text" maxlength="100" class="form-control" id="last_name" name="last_name" required>
+            {{ form.lastName.label }}
+            {{ form.lastName(class="form-control") }}
           </div>
+
+          <!-- course code -->
           <div class="form-group">
-            <label for="course_code">Course</label>
-            <select name="course_code" class="form-select" data-live-search="true" required>
+            <label for="addcourse">Course</label>
+            <select name="addcourse" class="form-select" data-live-search="true" required>
               <option selected disabled value=""></option>
-              {% for row in options %}
-              <option value="{{row.0}}">{{row.0}}</option>
+              {% for course in options %}
+              <option value="{{course.0}}">{{course.1}}</option>
               {% endfor %}
             </select>
           </div>
+
+          <!-- year level -->
           <div class="form-group">
-            <label for="year_level">Year Level:</label>
-            <select aria-label="Default select example" class="form-select" id="year_level" name="year_level" required>
-              <option selected disabled value=""></option>
-              <option value="First Year">First Year</option>
-              <option value="Second Year">Second Year</option>
-              <option value="Third Year">Third Year</option>
-              <option value="Fourth Year">Fourth Year</option>
-              <option value="Fifth Year">Fifth Year</option>
+            <label for="addyear">Year Level</label>
+            <select name="addyear" class="form-select" data-live-search="true" required>
+              <option selected disabled value="">Choose...</option>
+              <option value="1">First year</option>
+              <option value="2">Second year</option>
+              <option value="3">Third year</option>
+              <option value="4">Fourth year</option>
+              <option value="5">Fifth year</option>
+              <option value="6">Sixth year</option>
             </select>
           </div>
+
+          <!-- gender -->
           <div class="form-group">
-            <label for="gender">Gender:</label>
-            <select aria-label="Default select example" class="form-select" id="gender" name="gender" required>
-              <option selected disabled value=""></option>
+            <label for="addgender">Gender</label>
+            <select name="addgender" class="form-select" data-live-search="true" required>
+              <option selected disabled value="">Choose...</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Male">Others</option>
             </select>
           </div>
           <br>
+
+          <!-- submit button -->
           <div class="form-group">
-            <button class="btn btn-primary" type="submit">Save</button>
+            {{ form.submit(class="btn btn-primary") }}
           </div>
         </form>
       </div>

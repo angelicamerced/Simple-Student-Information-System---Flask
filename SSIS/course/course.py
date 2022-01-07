@@ -37,7 +37,7 @@ def edit_course():
         college_code = request.form['updatecollege']
         updateForm = courseForm()
         db.Course.update_course(updateForm.data, college_code)
-        flash("Course information has been successfully updated!", "success")
+        flash("Course has been successfully updated!", "success")
         return redirect(url_for('course.display_courses'))
 
     else:

@@ -15,13 +15,13 @@ def create_app(test_config=None):
         MYSQL_PASSWORD=DB_PASS,
     )
 
-    from SSIS.homepage import home
-    # from .student import student
+    from .homepage import home
+    from .student.student import student
     from .course.course import course
     from .college.college import college
 
     app.register_blueprint(home)
-    # app.register_blueprint(student,  url_prefix="/")
+    app.register_blueprint(student)
     app.register_blueprint(course)
     app.register_blueprint(college)
 

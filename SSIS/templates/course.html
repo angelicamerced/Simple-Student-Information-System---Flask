@@ -87,15 +87,21 @@
                         </div>
                         <div class="modal-body">
                           <form action="{{ url_for('course.edit_course') }}" method="POST">
+
+                            <!-- course code -->
                             <div class="form-group">
                               {{ form.course_code.label }}
                               {{ form.course_code(type="hidden", value=course.0) }}
                               {{ form.course_code(class="form-control", value=course.0, readonly="false") }}
                             </div>
+
+                            <!-- course name -->
                             <div class="form-group">
                               {{ form.course_name.label }}
                               {{ form.course_name(class="form-control", value=course.1) }}
                             </div>
+
+                            <!-- college code -->
                             <div class="form-group">
                               <label for="updatecollege">College</label>
                               <select name="updatecollege" class="form-control selectpicker" required>
@@ -106,6 +112,8 @@
                               </select>
                             </div>
                             <br>
+
+                            <!-- submit button -->
                             <div class="form-group">
                               {{ form.submit(class="btn btn-primary") }}
                             </div>
@@ -131,19 +139,25 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4>Add Data</h4>
+          <h4>Courses Information</h4>
         </div>
 
         <div class="modal-body">
           <form action="{{ url_for('course.create_course') }}" id=courseform method="POST">
+
+            <!-- course code -->
             <div class="form-group">
               {{ form.course_code.label }}
-              {{ form.course_code }}
+              {{ form.course_code(class="form-control") }}
             </div>
+
+            <!-- course name -->
             <div class="form-group">
               {{ form.course_name.label }}
-              {{ form.course_name }}
+              {{ form.course_name(class="form-control") }}
             </div>
+
+            <!-- college code -->
             <div class="form-group">
               <label for="addcollege">College</label>
               <select name="addcollege" class="form-control selectpicker" required>
@@ -154,6 +168,8 @@
               </select>
             </div>
             <br>
+
+            <!-- submit button -->
             <div class="form-group">
               {{ form.submit(class="btn btn-primary") }}
             </div>

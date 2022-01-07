@@ -85,19 +85,26 @@
                         </div>
                         <div class="modal-body">
                           <form action="{{ url_for('college.edit_college') }}" method="POST">
+
+                            <!-- college code -->
                             <div class="form-group">
                               {{ form.college_code.label }}
                               {{ form.college_code(type="hidden", value=college.0) }}
                               {{ form.college_code(class="form-control", value=college.0, readonly="false") }}
                             </div>
+
+                            <!-- college name -->
                             <div class="form-group">
                               {{ form.college_name.label }}
                               {{ form.college_name(class="form-control", value=college.1) }}
                             </div>
                             <br>
+
+                            <!-- submit button -->
                             <div class="form-group">
                               {{ form.submit(class="btn btn-primary") }}
                             </div>
+
                           </form>
                         </div>
                         <div class="modal-footer">
@@ -121,20 +128,26 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4>Add Data</h4>
+          <h4>College Information</h4>
         </div>
 
         <div class="modal-body">
           <form action="{{ url_for('college.create_college') }}" id=collegeform method="POST">
+
+            <!-- college code -->
             <div class="form-group">
               {{ form.college_code.label }}
-              {{ form.college_code }}
+              {{ form.college_code(class="form-control") }}
             </div>
+
+            <!-- college name -->
             <div class="form-group">
-              <label>College Name:</label>
-              {{ form.college_name }}
+              {{ form.college_name.label }}
+              {{ form.college_name(class="form-control") }}
             </div>
             <br>
+
+            <!-- submit button -->
             <div class="form-group">
               {{ form.submit(class="btn btn-primary") }}
             </div>

@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from SSIS.college.collegeForm import collegeForm
 import SSIS.models.collegeRepo as db
 
-# College blueprint
 college = Blueprint('college', __name__, template_folder='templates')
 
 # Routing for College Page
@@ -34,7 +33,7 @@ def edit_college():
 
         updateForm = collegeForm()
         db.College.update_college(updateForm.data)
-        flash("College information has been successfully updated!", "success")
+        flash("College has been successfully updated!", "success")
         return redirect(url_for('college.display_colleges'))
 
     else:
