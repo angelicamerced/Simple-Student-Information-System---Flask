@@ -22,8 +22,13 @@ def create_course():
 
         college_code = request.form['addcollege']
         addForm = courseForm()
-        db.Course.add_course(addForm.data,college_code)
-        flash("Course has been successfully added.", "success")
+        info = db.Course.add_course(addForm.data,college_code)
+
+        if 1 in info:
+            flash(f"'{info[1]}'has been successfully added.", "success")
+        else:
+            flash(f"{info[1]}", "error")
+
         return redirect(url_for('course.display_courses'))
 
     else:

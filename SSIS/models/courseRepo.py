@@ -21,14 +21,21 @@ class Course():
     # request course data
     @staticmethod
     def add_course(addForm, college_code):
-        cursor = mysql.connection.cursor()
-        cursor.execute(f'''
-                        INSERT INTO courses
-                        VALUES ('{addForm['course_code']}',
-                                '{addForm['course_name']}',
-                                '{college_code}')
-                        ''')
-        mysql.connection.commit()
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute(f'''
+                            INSERT INTO courses
+                            VALUES ('{addForm['course_code']}',
+                                    '{addForm['course_name']}',
+                                    '{college_code}')
+                            ''')
+            mysql.connection.commit()
+            info = [1, addForm["course_name"]]
+            return info
+
+        except Exception as e:
+            info = [0, e]
+            return info
 
     # update course data
     @staticmethod

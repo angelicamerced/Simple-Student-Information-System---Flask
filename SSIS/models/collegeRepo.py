@@ -13,30 +13,23 @@ class College():
             self.college_code = college_code
             self.college_name = college_name
 
-    # filter college data
-    @staticmethod
-    def collegebyCode(college_code):
-        cursor = connection.cursor()
-        cursor.execute(f'''
-                       SELECT * FROM colleges
-                       WHERE college_code=%s
-                       ''', (college_code,))
-        exist = cursor.fetchone()
-        cursor.close()
-        return exist
-
     # request college data
     @staticmethod
     def add_college(addForm):
-        cursor = connection.cursor()
-        cursor.execute(f'''
-                        INSERT INTO colleges
-                        VALUES ('{addForm['college_code']}',
-                                '{addForm['college_name']}')
-                        ''')
-        connection.commit()
-        data = [1, addForm['college_name']]
-        return data
+        try:
+            cursor = connection.cursor()
+            cursor.execute(f'''
+                            INSERT INTO colleges
+                            VALUES ('{addForm['college_code']}',
+                                    '{addForm['college_name']}')
+                            ''')
+            connection.commit()
+            data = [1, addForm['college_name']]
+            return data
+
+        except Exception as e:
+            info = [0, e]
+            return info
 
     # update college data
     @staticmethod

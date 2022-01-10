@@ -19,8 +19,13 @@ def create_college():
     if request.method == 'POST':
 
         addForm = collegeForm()
-        db.College.add_college(addForm.data)
-        flash("College has been successfully added.", "success")
+        info = db.College.add_college(addForm.data)
+
+        if 1 in info:
+            flash(f"'{info[1]}'has been successfully added.", "success")
+        else:
+            flash(f"{info[1]}", "error")
+
         return redirect(url_for('college.display_colleges'))
 
     else:

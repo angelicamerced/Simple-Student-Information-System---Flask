@@ -11,18 +11,26 @@ class Student():
 
     # request student data
     @staticmethod
-    def add_student(addForm, course_code, yearLevel, gender):
-        cur = mysql.connection.cursor()
-        cur.execute(f'''
-                    INSERT INTO students
-                    VALUES ('{addForm["id_number"]}',
-                            '{addForm["lastName"]}',
-                            '{addForm["firstName"]}',
-                            '{course_code}',
-                            '{yearLevel}',
-                            '{gender}')
-                    ''')
-        mysql.connection.commit()
+    def add_student(addForm, course_code, yearLevel, gender, image_url):
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute(f'''
+                        INSERT INTO students
+                        VALUES ('{addForm["id_number"]}',
+                                '{addForm["lastName"]}',
+                                '{addForm["firstName"]}',
+                                '{course_code}',
+                                '{yearLevel}',
+                                '{gender}',
+                                '{image_url}')
+                        ''')
+            mysql.connection.commit()
+            info = [1, addForm["firstName"], addForm["lastName"]]
+            return info
+
+        except Exception as e:
+            info = [0, e]
+            return info
 
     # update student data
     @staticmethod
@@ -40,6 +48,17 @@ class Student():
                         ''')
         mysql.connection.commit()
         cursor.close()
+
+    # update student photo
+    @staticmethod
+    def update_image(image_url, id_number):
+        cur = mysql.connection.cursor()
+        cur.execute(f'''
+                    UPDATE students
+                    SET img_url='{image_url}'
+                    WHERE id_number='{id_number}'
+                    ''')
+        mysql.connection.commit()
 
     # delete student data
     @staticmethod

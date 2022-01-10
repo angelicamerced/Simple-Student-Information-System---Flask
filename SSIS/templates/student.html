@@ -53,6 +53,7 @@
               <table id="datatable" class="bg-secondary bg-gradient bg-opacity-10 table table-hover students-list">
                 <thead>
                   <tr>
+                    <th style="width: 50px; min-width: 50px;"></th>
                     <th>ID Number</th>
                     <th>Last Name</th>
                     <th>First Name</th>
@@ -65,12 +66,21 @@
                   <tbody>
                     {% for student in students %}
                     <tr>
-                      <td class="fw-bold">{{student.0}}</td>
-                      <td class="fst-normal">{{student.1}}</td>
-                      <td class="fst-normal">{{student.2}}</td>
-                      <td class="fst-normal">{{student.3}}</td>
-                      <td class="fst-normal">{{student.4}}</td>
-                      <td class="fst-normal">{{student.5}}</td>
+                      <td class="align-middle py-1">
+                        {% if student.6 %}
+                          <a href="{{ student.6 }}" target="_blank">
+                            <img class="photo" src="{{ student.6 }}">
+                          </a>
+                        {% else %}
+                          <img class="photo" src="https://res.cloudinary.com/gelly/image/upload/v1641669976/ssis-images/download_xncoio.png"
+                        {% endif %}
+                      </td>
+                      <td class="fw-bold align-middle">{{student.0}}</td>
+                      <td class="fst-normal align-middle">{{student.1}}</td>
+                      <td class="fst-normal align-middle">{{student.2}}</td>
+                      <td class="fst-normal align-middle">{{student.3}}</td>
+                      <td class="fst-normal align-middle">{{student.4}}</td>
+                      <td class="fst-normal align-middle">{{student.5}}</td>
                       <td>
                         <!-- edit student button -->
                         <a href="{{ url_for('student.edit_student') }}" class="badge rounded-pill bg-warning text-dark btn-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{student.0}}">
@@ -179,7 +189,12 @@
       </div>
 
       <div class="modal-body">
-        <form action="{{ url_for('student.create_student') }}" id=studentform method="POST">
+        <form action="{{ url_for('student.create_student') }}" id=studentform method="POST" enctype="multipart/form-data">
+
+          <div class="form-group">
+            {{ form.image_file.label }}
+            {{ form.image_file(class="form-control", accept="image/*") }}
+          </div>
 
           <!-- id number -->
           <div class="form-group">
