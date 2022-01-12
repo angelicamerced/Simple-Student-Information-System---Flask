@@ -15,7 +15,6 @@ def display_students():
     courses = courseRepo.Course().getCourses()
     studentform = studentForm()
 
-    print(students)
     return render_template('student.html', students=students, options=courses, form=studentform)
 
 # Add student
@@ -53,6 +52,11 @@ def edit_student():
         yearLevel = request.form['updateyear']
         gender = request.form['updategender']
         updateForm = studentForm()
+
+        if updateForm.image_file.data:
+            image_url = upload_image(updateForm.image_file.data)
+            db.Student.update_image(image_url, updateForm.data['id_number'])
+
         db.Student.update_student(updateForm.data, course_code, yearLevel, gender)
         flash("Student has been successfully updated.", "success")
         return redirect(url_for('student.display_students'))

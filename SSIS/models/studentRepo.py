@@ -55,7 +55,7 @@ class Student():
         cur = mysql.connection.cursor()
         cur.execute(f'''
                     UPDATE students
-                    SET img_url='{image_url}'
+                    SET image_url='{image_url}'
                     WHERE id_number='{id_number}'
                     ''')
         mysql.connection.commit()

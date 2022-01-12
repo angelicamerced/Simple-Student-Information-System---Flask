@@ -103,7 +103,13 @@
                             <h4 class="modal-title">Edit Data</h4>
                           </div>
                           <div class="modal-body">
-                            <form action="{{ url_for('student.edit_student') }}" method="POST">
+                            <form action="{{ url_for('student.edit_student') }}" method="POST" enctype="multipart/form-data">
+
+                               <!-- photo -->
+                              <div class="form-group">
+                                {{ form.image_file.label }}
+                                {{ form.image_file(class="form-control", accept="image/*") }}
+                              </div>
 
                               <!-- id number -->
                               <div class="form-group">
@@ -191,6 +197,7 @@
       <div class="modal-body">
         <form action="{{ url_for('student.create_student') }}" id=studentform method="POST" enctype="multipart/form-data">
 
+           <!-- photo -->
           <div class="form-group">
             {{ form.image_file.label }}
             {{ form.image_file(class="form-control", accept="image/*") }}
